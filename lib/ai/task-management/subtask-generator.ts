@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import type { SubTask } from "../../../types";
 
@@ -18,7 +19,7 @@ const responseSchema = {
 
 export async function generateSubtasks(taskTitle: string): Promise<Pick<SubTask, 'content'>[]> {
     if (!API_KEY) {
-        console.warn("API_KEY not set. AI subtask generation is disabled.");
+        console.warn("API_KEY environment variable not set. AI subtask generation is disabled.");
         return [];
     }
 

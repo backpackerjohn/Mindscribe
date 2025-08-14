@@ -1,5 +1,6 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import type { Thought } from '../../types';
 import { useThoughts } from '../../hooks/useThoughts';
 import AddThought from '../../components/AddThought';
 import ThoughtList from '../../components/ThoughtList';
@@ -7,6 +8,7 @@ import SearchBar from '../../components/SearchBar';
 import ViewControls from './components/ViewControls';
 import ClusterView from './components/ClusterView';
 import InsightsPanel from './components/InsightsPanel';
+import ConvertThoughtModal from './components/ConvertThoughtModal';
 import { SparklesIcon, ClockIcon, BookmarkIcon } from '../../components/icons';
 
 const BrainDumpPage: React.FC = () => {
@@ -26,16 +28,23 @@ const BrainDumpPage: React.FC = () => {
     insights,
     isOrganizing,
     organizeThoughts,
+    linkThoughtToTask
   } = useThoughts();
   
+  const [convertingThought, setConvertingThought] = useState<Thought | null>(null);
   const hasActiveFilter = !!searchTerm || !!activeTag;
+
+  const handleTaskCreated = (thoughtId: string, taskId: string) => {
+    linkThoughtToTask(thoughtId, taskId);
+    setConvertingThought(null);
+  };
 
   const renderContent = () => {
     switch (viewMode) {
       case 'list':
-        return <ThoughtList thoughts={thoughts} isLoading={isLoading} hasActiveFilter={hasActiveFilter}/>;
+        return <ThoughtList thoughts={thoughts} isLoading={isLoading} hasActiveFilter={hasActiveFilter} onConvertToTask={setConvertingThought} />;
       case 'cluster':
-        return <ClusterView clusters={clusters} isLoading={isOrganizing} />;
+        return <ClusterView clusters={clusters} isLoading={isOrganizing} onConvertToTask={setConvertingThought} />;
       case 'timeline':
       case 'topic':
         const Icon = viewMode === 'timeline' ? ClockIcon : BookmarkIcon;
@@ -48,11 +57,12 @@ const BrainDumpPage: React.FC = () => {
           </div>
         );
       default:
-        return <ThoughtList thoughts={thoughts} isLoading={isLoading} hasActiveFilter={hasActiveFilter}/>;
+        return <ThoughtList thoughts={thoughts} isLoading={isLoading} hasActiveFilter={hasActiveFilter} onConvertToTask={setConvertingThought} />;
     }
   }
 
   return (
+    <>
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-2xl mx-auto w-full">
         <header className="text-center mb-8">
@@ -93,6 +103,14 @@ const BrainDumpPage: React.FC = () => {
         </div>
       </div>
     </div>
+     {convertingThought && (
+        <ConvertThoughtModal 
+            thought={convertingThought}
+            onClose={() => setConvertingThought(null)}
+            onTaskCreated={handleTaskCreated}
+        />
+     )}
+    </>
   );
 };
 

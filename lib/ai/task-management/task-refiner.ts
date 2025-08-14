@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import type { SubTask, ClarifyingQuestion } from "../../../types";
 
@@ -34,7 +35,7 @@ const clarifyingQuestionsSchema = {
 
 export async function generateClarifyingQuestions(taskTitle: string): Promise<Omit<ClarifyingQuestion, 'id'>[]> {
     if (!API_KEY) {
-        console.warn("API_KEY not set. AI question generation is disabled.");
+        console.warn("API_KEY environment variable not set. AI question generation is disabled.");
         return [];
     }
     
@@ -85,7 +86,7 @@ const refinedSubtasksSchema = {
 
 export async function refineSubtasks(taskTitle: string, answers: Record<string, string>): Promise<Pick<SubTask, 'content'>[]> {
     if (!API_KEY) {
-        console.warn("API_KEY not set. AI subtask refinement is disabled.");
+        console.warn("API_KEY environment variable not set. AI subtask refinement is disabled.");
         return [];
     }
 

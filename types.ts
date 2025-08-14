@@ -7,6 +7,7 @@ export interface Thought {
   isTagging: boolean;
   isSaving: boolean;
   relatedTasks?: string[]; // For PRP 4
+  convertedToTaskId?: string; // For Cross-System Integration
 }
 
 // PRP 2: AI-Powered Thought Organization
@@ -23,10 +24,11 @@ export interface AIThoughtGroup {
 }
 
 export interface AIInsight {
-  id: string;
+  id:string;
   content: string;
   type: 'pattern' | 'suggestion' | 'action' | 'connection';
-  relatedThoughtIds: string[];
+  relatedThoughtIds?: string[];
+  relatedTaskIds?: string[];
 }
 
 // PRP 3: Task Management
@@ -48,7 +50,7 @@ export interface Task {
     title: string;
     description?: string;
     subtasks: SubTask[];
-    category?: Category;
+    categoryId?: string;
     completed: boolean;
     createdAt: string;
     aiBreakdownRan: boolean;
@@ -85,4 +87,12 @@ export interface ClarifyingQuestion {
   id: string;
   question: string;
   options: string[];
+}
+
+// Authentication System
+export interface User {
+  id: string;
+  email: string;
+  passwordHash: string;
+  createdAt: string;
 }

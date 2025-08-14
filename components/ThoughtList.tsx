@@ -1,18 +1,19 @@
-
 import React from 'react';
 import type { Thought } from '../types';
 import ThoughtCard from './ThoughtCard';
 import { SparklesIcon } from './icons';
+import { ListSkeleton } from './Skeletons';
 
 interface ThoughtListProps {
   thoughts: Thought[];
   isLoading: boolean;
   hasActiveFilter: boolean;
+  onConvertToTask: (thought: Thought) => void;
 }
 
-const ThoughtList: React.FC<ThoughtListProps> = ({ thoughts, isLoading, hasActiveFilter }) => {
+const ThoughtList: React.FC<ThoughtListProps> = ({ thoughts, isLoading, hasActiveFilter, onConvertToTask }) => {
   if (isLoading) {
-    return <div className="text-center text-brand-text-secondary p-8">Loading thoughts...</div>;
+    return <ListSkeleton type="thought" />;
   }
 
   if (thoughts.length === 0) {
@@ -32,7 +33,7 @@ const ThoughtList: React.FC<ThoughtListProps> = ({ thoughts, isLoading, hasActiv
   return (
     <div className="space-y-4">
       {thoughts.map(thought => (
-        <ThoughtCard key={thought.id} thought={thought} />
+        <ThoughtCard key={thought.id} thought={thought} onConvertToTask={onConvertToTask} />
       ))}
     </div>
   );

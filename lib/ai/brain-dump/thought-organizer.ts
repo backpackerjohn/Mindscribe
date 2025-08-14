@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Thought, AIThoughtGroup } from "../../../types";
 
@@ -30,7 +31,7 @@ const responseSchema = {
 
 export async function clusterThoughts(thoughts: Thought[]): Promise<Omit<AIThoughtGroup, 'thoughts'>[]> {
     if (!API_KEY) {
-        console.warn("API_KEY not set. AI clustering is disabled.");
+        console.warn("API_KEY environment variable not set. AI clustering is disabled.");
         return [];
     }
     

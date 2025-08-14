@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface TagProps {
@@ -13,10 +12,14 @@ const Tag: React.FC<TagProps> = ({ tag, isActive, onClick }) => {
   const inactiveClasses = "bg-brand-primary text-brand-text-secondary hover:bg-brand-secondary hover:text-white";
 
   return (
-    <button onClick={() => onClick(tag)} className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}>
+    <button 
+      onClick={() => onClick(tag)} 
+      className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
+      aria-pressed={isActive}
+    >
       {tag}
     </button>
   );
 };
 
-export default Tag;
+export default React.memo(Tag);

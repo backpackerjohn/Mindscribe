@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import type { AIThoughtGroup, AIInsight } from "../../../types";
 
@@ -31,7 +32,7 @@ const responseSchema = {
 
 export async function generateInsights(thoughtGroups: AIThoughtGroup[]): Promise<AIInsight[]> {
     if (!API_KEY) {
-        console.warn("API_KEY not set. AI insight generation is disabled.");
+        console.warn("API_KEY environment variable not set. AI insight generation is disabled.");
         return [];
     }
     

@@ -1,15 +1,16 @@
 
 import React from 'react';
-import type { AIThoughtGroup } from '../../../types';
+import type { AIThoughtGroup, Thought } from '../../../types';
 import ThoughtCluster from './ThoughtCluster';
 import { LayoutGridIcon } from '../../../components/icons';
 
 interface ClusterViewProps {
   clusters: AIThoughtGroup[];
   isLoading: boolean;
+  onConvertToTask: (thought: Thought) => void;
 }
 
-const ClusterView: React.FC<ClusterViewProps> = ({ clusters, isLoading }) => {
+const ClusterView: React.FC<ClusterViewProps> = ({ clusters, isLoading, onConvertToTask }) => {
   if (isLoading) {
     return <div className="text-center text-brand-text-secondary p-8">Organizing your thoughts into clusters...</div>;
   }
@@ -27,7 +28,7 @@ const ClusterView: React.FC<ClusterViewProps> = ({ clusters, isLoading }) => {
   return (
     <div className="space-y-4 animate-fade-in">
       {clusters.map((cluster) => (
-        <ThoughtCluster key={cluster.id} cluster={cluster} />
+        <ThoughtCluster key={cluster.id} cluster={cluster} onConvertToTask={onConvertToTask} />
       ))}
     </div>
   );

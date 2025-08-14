@@ -4,10 +4,12 @@ import type { Thought, ViewMode, AIThoughtGroup, AIInsight } from '../types';
 import { generateTags } from '../services/geminiService';
 import { clusterThoughts } from '../lib/ai/brain-dump/thought-organizer';
 import { generateInsights } from '../lib/ai/brain-dump/insight-generator';
-
-const LOCAL_STORAGE_KEY = 'mindscribe-thoughts';
+import { useAuth } from '../contexts/AuthContext';
 
 export const useThoughts = () => {
+  const { user } = useAuth();
+  const LOCAL_STORAGE_KEY = useMemo(() => user ? `mindscribe-thoughts-${user.id}` : null, [user]);
+
   const [thoughts, setThoughts] = useState<Thought[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,25 +23,34 @@ export const useThoughts = () => {
 
 
   useEffect(() => {
+    setIsLoading(true);
+    if (!LOCAL_STORAGE_KEY) {
+        setThoughts([]);
+        setIsLoading(false);
+        return;
+    }
     try {
       const storedThoughts = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (storedThoughts) {
         setThoughts(JSON.parse(storedThoughts));
+      } else {
+        setThoughts([]);
       }
     } catch (error) {
       console.error("Failed to load thoughts from localStorage", error);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [LOCAL_STORAGE_KEY]);
 
   useEffect(() => {
+    if (!LOCAL_STORAGE_KEY || isLoading) return;
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(thoughts));
     } catch (error) {
       console.error("Failed to save thoughts to localStorage", error);
     }
-  }, [thoughts]);
+  }, [thoughts, LOCAL_STORAGE_KEY, isLoading]);
 
   const addThought = useCallback(async (content: string) => {
     if (!content.trim()) return;
@@ -103,6 +114,14 @@ export const useThoughts = () => {
     }
   }, [thoughts]);
 
+  const linkThoughtToTask = useCallback((thoughtId: string, taskId: string) => {
+    setThoughts(prev => prev.map(t => t.id === thoughtId ? {
+      ...t,
+      convertedToTaskId: taskId,
+      relatedTasks: [...(t.relatedTasks || []), taskId]
+    } : t));
+  }, []);
+
   const allTags = useMemo(() => {
     const tagsSet = new Set<string>();
     thoughts.forEach(thought => {
@@ -135,6 +154,7 @@ export const useThoughts = () => {
     activeTag,
     setActiveTag,
     clearFilters,
+    linkThoughtToTask,
     // PRP 2
     viewMode,
     setViewMode,

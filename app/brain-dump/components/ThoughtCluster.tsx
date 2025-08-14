@@ -1,14 +1,15 @@
 
 import React, { useState } from 'react';
-import type { AIThoughtGroup } from '../../../types';
+import type { AIThoughtGroup, Thought } from '../../../types';
 import ThoughtCard from '../../../components/ThoughtCard';
 import { SparklesIcon } from '../../../components/icons';
 
 interface ThoughtClusterProps {
   cluster: AIThoughtGroup;
+  onConvertToTask: (thought: Thought) => void;
 }
 
-const ThoughtCluster: React.FC<ThoughtClusterProps> = ({ cluster }) => {
+const ThoughtCluster: React.FC<ThoughtClusterProps> = ({ cluster, onConvertToTask }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -32,7 +33,7 @@ const ThoughtCluster: React.FC<ThoughtClusterProps> = ({ cluster }) => {
       </summary>
       <div className="p-4 border-t border-brand-primary space-y-4">
         {cluster.thoughts.map(thought => (
-          <ThoughtCard key={thought.id} thought={thought} />
+          <ThoughtCard key={thought.id} thought={thought} onConvertToTask={onConvertToTask}/>
         ))}
       </div>
     </details>
